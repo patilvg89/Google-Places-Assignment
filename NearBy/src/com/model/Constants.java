@@ -11,5 +11,7 @@ public class Constants {
 			+ "key=AIzaSyAARgf2Wnnree5GLNuqAEz5rvpHD9Uco8Y&radius="
 			+ radius
 			+ "&";
-
+	// db constants
+	public static String DBName = "fav_place_database.db";
+	public static String TableName = "Fav_Places";
 }

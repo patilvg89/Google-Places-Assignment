@@ -33,8 +33,10 @@ public class ActivityLaunch extends Activity implements OnClickListener {
 		findViewById(R.id.buttonHospital).setOnClickListener(this);
 		findViewById(R.id.buttonSpa).setOnClickListener(this);
 		findViewById(R.id.buttonRestaurent).setOnClickListener(this);
-		
+
 		locationAvailable();
+		// copy database
+		Util.copyDatabase(this);
 	}
 
 	@Override
@@ -49,6 +51,12 @@ public class ActivityLaunch extends Activity implements OnClickListener {
 		switch (item.getItemId()) {
 		case R.id.menu_loc:
 			getGPSLocation();
+			break;
+		case R.id.menu_fav:
+			// slide from right to left
+			overridePendingTransition(R.anim.slide_in_left,
+					R.anim.slide_out_right);
+			startActivity(new Intent(ActivityLaunch.this, ActivityFav.class));
 			break;
 		default:
 			break;
@@ -111,7 +119,7 @@ public class ActivityLaunch extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		if (!latLongiNull) {
 			switch (v.getId()) {
-			
+
 			case R.id.buttonFood:
 				startActivity(new Intent(ActivityLaunch.this,
 						ActivityDashboard.class).putExtra("SEARCH_STRING",

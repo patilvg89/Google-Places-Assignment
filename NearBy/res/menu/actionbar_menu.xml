@@ -5,5 +5,10 @@
         android:showAsAction="always"
         android:title="My Location">
     </item>
+    <item
+        android:id="@+id/menu_fav"
+        android:showAsAction="always"
+        android:title="Favorites">
+    </item>
 
 </menu>

@@ -1,15 +1,21 @@
 package com.nearby.app.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentActivity;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import com.db.DBhandler;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.image.utils.ImageLoader;
 import com.manuelpeinado.fadingactionbar.FadingActionBarHelper;
 import com.model.Constants;
@@ -17,8 +23,10 @@ import com.model.PlaceDetail;
 import com.nearby.app.R;
 import com.util.Util;
 
-public class ActivityDetail extends Activity {
+public class ActivityDetail extends FragmentActivity {
 	ImageLoader imageLoader;
+	private PlaceDetail thumbs;
+	GoogleMap googleMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +54,7 @@ public class ActivityDetail extends Activity {
 		Intent intent = this.getIntent();
 		Bundle bundle = intent.getExtras();
 
-		PlaceDetail thumbs = (PlaceDetail) bundle.getSerializable("DETAILS");
+		thumbs = (PlaceDetail) bundle.getSerializable("DETAILS");
 		TextView title = (TextView) findViewById(R.id.textViewTitle);
 		title.setText(thumbs.getName());
 		TextView text1 = (TextView) findViewById(R.id.textViewHeader11);
@@ -54,7 +62,13 @@ public class ActivityDetail extends Activity {
 		TextView text2 = (TextView) findViewById(R.id.textViewHeader21);
 		text2.setText(String.valueOf(thumbs.getRating()));
 		TextView text3 = (TextView) findViewById(R.id.textViewHeader31);
-		text3.setText(Util.getListInString(thumbs.getTypes()));
+		String text = Util.getListInString(thumbs.getTypes());
+		if (!text.equals("")) {
+			text3.setText(text);
+		} else {
+			text3.setText(thumbs.getTypesText());
+		}
+
 		TextView text4 = (TextView) findViewById(R.id.textViewHeader41);
 		text4.setText(thumbs.getVicinity());
 
@@ -64,6 +78,25 @@ public class ActivityDetail extends Activity {
 		System.out.println("Photo URL=" + photoUrl);
 		imageLoader.DisplayImage(photoUrl, Image);
 
+		//set map
+		SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.googleMap);
+		googleMap = supportMapFragment.getMap();
+		LatLng latLng = new LatLng(Double.parseDouble(thumbs.getLat()),
+				Double.parseDouble(thumbs.getLng()));
+		// googleMap.addMarker(new MarkerOptions().position(latLng));
+		googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+		googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+		googleMap.addMarker(new MarkerOptions().title(thumbs.getName())
+				.snippet(thumbs.getVicinity()).position(latLng)
+				.anchor(0.0f, 1.0f)); // Anchors the marker on the bottom left
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.actionbar_details, menu);
+		return true;
 	}
 
 	@Override
@@ -71,6 +104,11 @@ public class ActivityDetail extends Activity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			onBackPressed();
+			break;
+		case R.id.menu_fav:
+			DBhandler.getInstance(this).bulkInsertIntoDB(thumbs);
+			Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT)
+					.show();
 			break;
 		default:
 			break;

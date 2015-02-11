@@ -1,7 +1,6 @@
 package com.adapter;
 
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,16 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.androidquery.AQuery;
 import com.image.utils.ImageLoader;
 import com.model.PlaceDetail;
 import com.nearby.app.R;
 import com.nearby.app.ui.ActivityDetail;
 
-/**
- * Created by amol on 10/02/2015.
- */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 		implements OnClickListener {
 	ArrayList<PlaceDetail> mDataset = new ArrayList<PlaceDetail>();
@@ -100,8 +94,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>
 		Toast.makeText(v.getContext(), item.getName(), Toast.LENGTH_LONG)
 				.show();
 		// slide from right to left
-		((Activity) v.getContext()).overridePendingTransition(R.anim.slide_in_left,
-				R.anim.slide_out_right);
+		((Activity) v.getContext()).overridePendingTransition(
+				R.anim.slide_in_left, R.anim.slide_out_right);
 		v.getContext().startActivity(
 				new Intent(v.getContext().getApplicationContext(),
 						ActivityDetail.class).putExtras(bundle));
